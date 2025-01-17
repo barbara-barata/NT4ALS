@@ -1,6 +1,9 @@
 import pandas as pd
 import re
 from BaselineRemoval import BaselineRemoval
+import numpy as np
+import matplotlib.pyplot as plt
+import ast
 
 
 # Substituir 'caminho_do_arquivo' pelo caminho real do teu arquivo Excel
@@ -48,3 +51,19 @@ corrected_spectra_df = pd.DataFrame(corrected_spectra)
 corrected_spectra_df.to_excel("Corrected_Spectra.xlsx", index=True)
 
 print("Correção de baseline concluída e salva em 'Corrected_Spectra.xlsx'.")
+
+for i in range (0, len(corrected_spectra_df)):
+    plt.plot(corrected_spectra_df.values[i][0],label= corrected_spectra_df.index[i])
+
+plt.title('FTIR Spectra of Samples')
+plt.xlabel('Wavenumber')
+plt.ylabel('Absorbance')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+
+
+
+
