@@ -42,26 +42,43 @@ def corrigir_baseline(espectro):
     return baseObj.ModPoly(2)  # O número 2 define o grau do polinômio
 
 # Aplicar a correção a todas as linhas
-corrected_spectra = data_agrupada.apply(corrigir_baseline, axis=1)
+baseline_corrected_spectral_data = data_agrupada.apply(corrigir_baseline, axis=1)
 
 # Converter para DataFrame
-corrected_spectra_df = pd.DataFrame(corrected_spectra)
+baseline_corrected_spectral_data_df = pd.DataFrame(baseline_corrected_spectral_data)
 
 # Salvar os resultados corrigidos
-corrected_spectra_df.to_excel("Corrected_Spectra.xlsx", index=True)
+baseline_corrected_spectral_data_df.to_excel("Baseline_Corrected_Spectra.xlsx", index=True)
 
-print("Correção de baseline concluída e salva em 'Corrected_Spectra.xlsx'.")
+print("Correção de baseline concluída e salva em 'Baseline_Corrected_Spectra.xlsx'.")
 
-for i in range (0, len(corrected_spectra_df)):
-    plt.plot(corrected_spectra_df.values[i][0],label= corrected_spectra_df.index[i])
 
-plt.title('FTIR Spectra of Samples')
-plt.xlabel('Wavenumber')
-plt.ylabel('Absorbance')
+def euclidean_normalization(spectrum):
+    euclidean_length = np.linalg.norm(spectrum)
+    return spectrum / euclidean_length
+
+# Apply Euclidean normalization to each spectrum
+normalized_spectral_data = np.apply_along_axis(euclidean_normalization, axis=1, arr=baseline_corrected_spectral_data)
+
+# Cut intensities between wavenumbers 1850 and 2300
+cut_wavelengths_indices = (wavelengths >= 1850) & (wavelengths <= 2500)
+normalized_spectral_data[:, cut_wavelengths_indices] = 0
+
+# Plotting all baseline-corrected and normalized spectra
+num_spectra = len(normalized_spectral_data)
+
+plt.figure(figsize=(10, 6))
+for i in range(num_spectra):
+    plt.plot(wavelengths, normalized_spectral_data[i])
+
+plt.title('All Spectra (Baseline Corrected, Normalized, and Cut between 1850-2500) - URINA')
+plt.xlabel('Wavelength')
+plt.ylabel('Intensity')
 plt.legend()
-plt.grid(True)
+plt.xlim((wavelengths.min(), wavelengths.max()))  # Set x-axis limits to include all data
 plt.show()
 
+print(f"Number of spectra plotted: {num_spectra}")
 
 
 
