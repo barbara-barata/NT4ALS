@@ -10,7 +10,7 @@ from sklearn.preprocessing import LabelEncoder
 from mpl_toolkits.mplot3d import Axes3D
 
 # Load the data
-file_path = "C:/Users/bsbar/NT4ALS/Baseline_Corrected_Spectra.xlsx"
+file_path = "Baseline_Corrected_Spectra.xlsx"
 df = pd.read_excel(file_path)
 
 # Extract sample names and spectra
@@ -18,7 +18,7 @@ sample_names = df.iloc[:, 0]  # First column (Sample names)
 spectra = df.iloc[:, 1:]      # Spectra data
 
 # Load the data
-file_path = "C:/Users/bsbar/NT4ALS/Samples group.xlsx"
+file_path = "Samples group.xlsx"
 df = pd.read_excel(file_path)
 
 # Extract sample names and group
@@ -37,8 +37,7 @@ for i in range(0, len(spectra)):
                 Comparing_samples.append(0)
              else:
                  Comparing_samples.append(2)
-         
-        
+    
 # Standardize the data (important for PCA)
 scaler = StandardScaler()
 scaled_spectra = scaler.fit_transform(spectra)
@@ -69,8 +68,8 @@ plt.show()
 
 # Plot PCA results    
 # Define color mapping
-group_colors = {1: "Blue", 0: "Red", 2: "Yellow"}
-group_labels = {1: "Patient", 0: "Control", 2: "Don't know"}
+group_colors = {1: "Blue", 0: "Red"}
+group_labels = {1: "Patient", 0: "Control"}
 fig, ax = plt.subplots(figsize=(8,6))
 
 # Plot each group separately
@@ -129,8 +128,8 @@ plt.ylim(0, max(explained_variance) + 5)  # Adjust limit for better visualizatio
 plt.show()
 
 # Define color mapping
-group_colors = {1: "Blue", 0: "Red", 2: "Yellow"}
-group_labels = {1: "Patient", 0: "Control", 2: "Don't know"}
+group_colors = {1: "Blue", 0: "Red"}
+group_labels = {1: "Patient", 0: "Control"}
 
 # 3D PCA plot results
 fig = plt.figure(figsize=(10,7))
