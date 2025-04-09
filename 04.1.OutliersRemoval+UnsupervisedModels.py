@@ -16,7 +16,7 @@ group_colors = {1: "blue", 0: "red", 2: "gray"}
 group_labels = {1: "Patient", 0: "Control", 2: "Unknown"}
 
 # Carregar dados espectrais e grupos usando merge
-df_spectra = pd.read_excel("Baseline_Corrected_Spectra.xlsx")
+df_spectra = pd.read_excel("Normalized_Spectra.xlsx")
 df_groups  = pd.read_excel("Samples group.xlsx")
 df = pd.merge(df_spectra, df_groups, left_on=df_spectra.columns[0],
               right_on=df_groups.columns[0], how='left')
@@ -32,16 +32,18 @@ spectra = df.iloc[:, 1:df_spectra.shape[1]]
 # havido uma parte do espectro que deveria ter sido cortada
 # tens de me explicar como é que isso acontece.
 # e isso faz-me querer ver os epectros tratados antes de entrarem aqui. os plots da baseline removal
+#@pv já está resolvido    
 
 print (spectra)
 
 # Remover outliers via z-score
 z_scores = np.abs(zscore(spectra, nan_policy='omit'))
-mask = ~(np.any(z_scores >= 10, axis=1))
+mask = ~(np.any(z_scores >= 5, axis=1))
 spectra_clean = spectra[mask]
 sample_names_clean = sample_names[mask]
 groups_clean = df['Group'][mask].to_numpy()
 # todo: dar count do número de outliers
+#@pv diminui o valor para 5 porque nao tinha outliers acima de 10
 num_outliers = len(spectra) - len(spectra_clean)
 print(f"Número de outliers removidos: {num_outliers}")
 
@@ -60,12 +62,15 @@ pca_df['Group'] = groups_clean
 
 print(f"Explained Variance: PC1={explained[0]:.2f}%, PC2={explained[1]:.2f}%, PC3={explained[2]:.2f}%")
 
-# Plot 2D do PCA (PC1 vs. PC2)
-plot_2d_scatter(pca_df, 'PC1', 'PC2', 'PCA (PC1 vs. PC2)',
+# Plot 2D do PCA
+for i in range(1,4):
+    for j in range(1,4):
+        if j>i:
+            plot_2d_scatter(pca_df, f'PC{i}', f'PC{j}', f'PCA (PC{i} vs. PC{j})',
                 group_colors=group_colors, group_labels=group_labels,
-                xlabel=f'PC1 ({explained[0]:.2f}%)', ylabel=f'PC2 ({explained[1]:.2f}%)',
+                xlabel=f'PC{i} ({explained[i-1]:.2f}%)', ylabel=f'PC{j}({explained[j-1]:.2f}%)',
                 legend_kwargs={'bbox_to_anchor': (1, 1)})
-
+        
 # Plot 3D do PCA (PC1, PC2 e PC3)
 plot_3d_scatter(pca_df, 'PC1', 'PC2', 'PC3', '3D PCA of FTIR Spectra',
                 group_colors=group_colors, group_labels=group_labels,
@@ -78,8 +83,11 @@ pls_components = pls.fit_transform(scaled_spectra, groups_clean)[0]
 pls_df = pd.DataFrame(pls_components, columns=['PLS1', 'PLS2', 'PLS3'])
 pls_df['Group'] = groups_clean
 
-# Plot 2D do PLS-DA (PLS1 vs. PLS2)
-plot_2d_scatter(pls_df, 'PLS1', 'PLS2', 'PLS-DA (PLS1 vs. PLS2)',
+# Plot 2D do PLS-DA
+for i in range(1,4):
+    for j in range(1,4):
+        if j>i:
+            plot_2d_scatter(pls_df, f'PLS{i}', f'PLS{j}', f'PLS-DA (PLS{i} vs. PLS{j})',
                 group_colors=group_colors, group_labels=group_labels)
 
 # Plot 3D do PLS-DA (PLS1, PLS2 e PLS3)
@@ -95,7 +103,10 @@ pls_pca_df = pd.DataFrame(pls_pca_components, columns=['PLS1', 'PLS2', 'PLS3'])
 pls_pca_df['Group'] = groups_clean
 
 # Plot 2D do PLS-DA PCA (PLS1 vs. PLS2)
-plot_2d_scatter(pls_pca_df, 'PLS1', 'PLS2', 'PLS-DA PCA (PLS1 vs. PLS2)',
+for i in range(1,4):
+    for j in range(1,4):
+        if j>i:
+            plot_2d_scatter(pls_pca_df, f'PLS{i}', f'PLS{j}', f'PLS-DA PCA (PLS{i} vs. PLS{j})',
                 group_colors=group_colors, group_labels=group_labels)
 
 # Plot 3D do PLS-DA PCA (PLS1, PLs2 e PLS3)
