@@ -74,27 +74,55 @@ normalized_spectral_data = baseline_corrected_spectral_data.copy()
 for i in range(0, len(baseline_corrected_spectral_data)):
     normalized_spectral_data[i] = np.apply_along_axis(euclidean_normalization, axis=0, arr=baseline_corrected_spectral_data[i])
 
-for j in range(0, len(normalized_spectral_data)):
-    for i in range(0, len(data_agrupada.columns)):
-        if (1850 <= data_agrupada.columns[i] <= 2500):
-            normalized_spectral_data[j][i] = 0
+# Converter para DataFrame
+normalized_spectral_data_df = pd.DataFrame(normalized_spectral_data)
 
-# Cut intensities between wavenumbers 1850 and 2300
-#cut_wavelengths_indices = (wavelengths >= 1850) & (wavelengths <= 2500)
-#normalized_spectral_data[:, cut_wavelengths_indices] = 0
+# Expanding the array into multiple columns
+normalized_spectral_data_df_expanded = normalized_spectral_data_df.iloc[:,0].apply(pd.Series)
+
+# Renaming columns (optional)
+normalized_spectral_data_df_expanded.columns = [f'col_{i}' for i in range(normalized_spectral_data_df_expanded.shape[1])]
+
+print(normalized_spectral_data_df_expanded)
+            
+#Eliminar pontos do espectro no intervalo 1850-2500
+index_mask = []
+for k in range(0, len(data_agrupada.columns)):
+    if (not(1850 <= data_agrupada.columns[k] <= 2500)):
+        index_mask.append(1)
+    else:
+        index_mask.append(0)
+               
+bool_mask = np.array(index_mask).astype(bool)
+
+normalized_spectral_data_df_expanded_filtered = normalized_spectral_data_df_expanded.loc[:,bool_mask]
+cut_columns = data_agrupada.columns[bool_mask]
+cut_columns_first = []
+cut_columns_second = []
+for j in range(0,len(cut_columns)):
+    if cut_columns[j] <= 1850:
+        cut_columns_first.append(cut_columns[j])
+    else:
+        cut_columns_second.append(cut_columns[j])
+
+#Guardar resultados
+normalized_spectral_data_df_expanded_filtered.to_excel("Normalized_Spectra.xlsx", index=True)
+print ("Normalized_Spectra.xlsx")
 
 # Plotting all baseline-corrected and normalized spectra
-num_spectra = len(normalized_spectral_data)
+num_spectra = len(normalized_spectral_data_df_expanded_filtered)
 
 plt.figure(figsize=(10, 6))
 for i in range(num_spectra):
-    plt.plot(data_agrupada.columns, normalized_spectral_data[i])
+    plotList = normalized_spectral_data_df_expanded_filtered.iloc[i].tolist()
+    plt.plot(cut_columns_second, plotList[0:len(cut_columns_second)])
+    plt.plot(cut_columns_first, plotList[len(cut_columns_second):])
 
-plt.title('All Spectra (Baseline Corrected, Normalized, and Cut between 1850-2500) - URINA')
+plt.title('All Spectra (Baseline Corrected, Normalized, and Cut between 1850-2500) - URINE')
 plt.xlabel('Wavelength')
 plt.ylabel('Intensity')
 plt.legend()
-plt.xlim((data_agrupada.columns.min(), data_agrupada.columns.max()))  # Set x-axis limits to include all data
+plt.xlim((cut_columns.min(), cut_columns.max()))  # Set x-axis limits to include all data
 plt.show()
 
 print(f"Number of spectra plotted: {num_spectra}")
