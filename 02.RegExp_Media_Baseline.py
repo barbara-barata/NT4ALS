@@ -127,6 +127,74 @@ plt.show()
 
 print(f"Number of spectra plotted: {num_spectra}")
 
+# Define os grupos por sexo
+group_colors = {1: "blue", 0: "red"}
+group_labels = {1: "Female", 0: "Male"}
+
+# Carregar dados espectrais e grupos usando merge
+df_spectra = pd.read_excel("Normalized_Spectra.xlsx")
+df_groups  = pd.read_excel("Samples group.xlsx")
+df = pd.merge(df_spectra, df_groups, left_on=df_spectra.columns[0],
+              right_on=df_groups.columns[0], how='left')
+
+# Mapear os grupos
+group_map = {"Feminino": 1, "Masculino": 0}
+df['Sex'] = df['Sex'].map(group_map).fillna(2).astype(int)
+
+sample_names = df.iloc[:, 0]
+spectra = df.iloc[:, 1:df_spectra.shape[1]]
+  
+print (spectra)
+
+label_bool = {1:0, 0:0, 2:0}
+
+# Plot
+plt.figure(figsize=(10, 6))
+for i in range(len(df)):
+    plotList = spectra.iloc[i].tolist()
+    label = None
+    if label_bool[df['Sex'].iloc[i]] == 0:
+        label = group_labels[df['Sex'].iloc[i]]
+        label_bool[df['Sex'].iloc[i]] = 1
+    plt.plot(cut_columns_second, plotList[0:len(cut_columns_second)], color=group_colors[df['Sex'].iloc[i]], label=label)
+    plt.plot(cut_columns_first, plotList[len(cut_columns_second):], color=group_colors[df['Sex'].iloc[i]])
+plt.title('All Spectra by gender')
+plt.xlabel('Wavenumber')
+plt.ylabel('Intensity')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+# Define os grupos por idade
+for i in range (len(df['Age'])):
+        if df['Age'].iloc[i] >= 30 and df['Age'].iloc[i]<50:
+            df['Age'].iloc[i] = 1
+        elif df['Age'].iloc[i] >= 50 and df['Age'].iloc[i]<70:
+            df['Age'].iloc[i] = 0
+        elif df['Age'].iloc[i] >= 70 and df['Age'].iloc[i]<=100:
+            df['Age'].iloc[i] = 2
+
+group_colors = {1: "blue", 0: "red", 2: "yellow"}
+group_labels = {1: "[30-50[", 0: "[50-70[", 2: "[70-100]"}
+
+label_bool = {1:0, 0:0, 2:0}
+
+# Plot
+plt.figure(figsize=(10, 6))
+for i in range(len(df)):
+    plotList = spectra.iloc[i].tolist()
+    label = None
+    if label_bool[df['Age'].iloc[i]] == 0:
+        label = group_labels[df['Age'].iloc[i]]
+        label_bool[df['Age'].iloc[i]] = 1
+    plt.plot(cut_columns_second, plotList[0:len(cut_columns_second)], color=group_colors[df['Age'].iloc[i]], label=label)
+    plt.plot(cut_columns_first, plotList[len(cut_columns_second):], color=group_colors[df['Age'].iloc[i]])
+plt.title('All Spectra by age')
+plt.xlabel('Wavenumber')
+plt.ylabel('Intensity')
+plt.legend()
+plt.tight_layout()
+plt.show()
 
 
 
