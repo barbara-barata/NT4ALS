@@ -7,8 +7,8 @@ output_dir = "plots"
 os.makedirs(output_dir, exist_ok=True)
 
 # Valores padrão para cores e rótulos de grupos
-DEFAULT_GROUP_COLORS = {1: "blue", 0: "red", 2: "gray"}
-DEFAULT_GROUP_LABELS = {1: "Patient", 0: "Control", 2: "Unknown"}
+DEFAULT_GROUP_COLORS = {1: "blue", 0: "red"}
+DEFAULT_GROUP_LABELS = {1: "Patient", 0: "Control"}
 
 # Função para gerar um nome de arquivo baseado no título do plot
 def get_filename(title):
