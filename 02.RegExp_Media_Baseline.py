@@ -81,7 +81,7 @@ normalized_spectral_data_df = pd.DataFrame(normalized_spectral_data)
 normalized_spectral_data_df_expanded = normalized_spectral_data_df.iloc[:,0].apply(pd.Series)
 
 # Renaming columns (optional)
-normalized_spectral_data_df_expanded.columns = [f'col_{i}' for i in range(normalized_spectral_data_df_expanded.shape[1])]
+normalized_spectral_data_df_expanded.columns = data_agrupada.columns
 
 print(normalized_spectral_data_df_expanded)
             
@@ -106,7 +106,7 @@ for j in range(0,len(cut_columns)):
         cut_columns_second.append(cut_columns[j])
 
 #Guardar resultados
-normalized_spectral_data_df_expanded_filtered.to_excel("Normalized_Spectra.xlsx", index=True)
+normalized_spectral_data_df_expanded_filtered.T.to_excel("Normalized_Spectra.xlsx", index=True)
 print ("Normalized_Spectra.xlsx")
 
 # Plotting all baseline-corrected and normalized spectra

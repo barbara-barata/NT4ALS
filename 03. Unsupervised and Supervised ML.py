@@ -177,3 +177,49 @@ for i in range(1,4):
         if j>i:
             plot_2d_scatter(pls_df, f'PLS{i}', f'PLS{j}', f'PLS-DA (PLS{i} vs. PLS{j}) by age',
                 group_colors=group_colors, group_labels=group_labels)
+            
+#Prep for GraphPad Prism
+#Means
+#For all samples
+avg_list = []
+
+for col in spectra.columns:
+    acc=0
+    for i in range(0,len(spectra[col].values)):
+        acc=acc+spectra[col].values[i]
+    avg=acc/len(spectra[col].values)
+    avg_list.append(avg)   
+
+with open ("all samples mean.txt","w") as file:
+    for value in avg_list[::-1]:
+        file.write(f"{value},\n")
+        
+#For control
+con_list =[]
+
+for col in spectra.columns:
+    acc=0
+    for i in range(0,len(spectra[col].values)):
+        if df['Group'][i]==0:
+            acc=acc+spectra[col].values[i]
+    avg=acc/len(spectra[col].values)
+    con_list.append(avg)   
+
+with open ("control mean.txt","w") as file:
+    for value in con_list[::-1]:
+        file.write(f"{value},\n")
+        
+#For Patient
+pat_list =[]
+
+for col in spectra.columns:
+    acc=0
+    for i in range(0,len(spectra[col].values)):
+        if df['Group'][i]==1:
+            acc=acc+spectra[col].values[i]
+    avg=acc/len(spectra[col].values)
+    pat_list.append(avg)   
+
+with open ("patient mean.txt","w") as file:
+    for value in pat_list[::-1]:
+        file.write(f"{value},\n")
