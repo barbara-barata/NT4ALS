@@ -9,7 +9,7 @@ from scipy.stats import zscore
 from zz_plots_func import plot_2d_scatter, plot_3d_scatter
 
 # Define os mapeamentos de cores e labels para os grupos
-group_colors = {1: "blue", 0: "red"}
+group_colors = {1: "#ff7f7f", 0: "#a5a7a7"}
 group_labels = {1: "Patient", 0: "Control"}
 
 # Carregar dados espectrais e grupos usando merge
@@ -87,7 +87,7 @@ plot_3d_scatter(pls_df, 'PLS1', 'PLS2', 'PLS3', '3D PLS-DA of FTIR Spectra',
 
 #PCA para o sexo
 # Define os grupos por sexo
-group_colors = {1: "blue", 0: "red"}
+group_colors = {1: "#FF9FCF", 0: "#4c95ff"}
 group_labels = {1: "Female", 0: "Male"}
 
 # Mapear os grupos
@@ -108,13 +108,25 @@ explained = pca.explained_variance_ratio_ * 100
 
 pca_df = pd.DataFrame(pcs, columns=['PC1', 'PC2', 'PC3'])
 pca_df['Group'] = sex_clean
+pca_df['Filter'] = groups_clean
+
+pca_df_control = pca_df[pca_df['Filter']==0]
+pca_df_patient = pca_df[pca_df['Filter']==1]
 
 print(f"Explained Variance: PC1={explained[0]:.2f}%, PC2={explained[1]:.2f}%, PC3={explained[2]:.2f}%")
 
 for i in range(1,4):
     for j in range(1,4):
         if j>i:
-            plot_2d_scatter(pca_df, f'PC{i}', f'PC{j}', f'PCA (PC{i} vs. PC{j}) by sex',
+            plot_2d_scatter(pca_df_control, f'PC{i}', f'PC{j}', f'PCA (PC{i} vs. PC{j}) of controls grouped by sex',
+                group_colors=group_colors, group_labels=group_labels,
+                xlabel=f'PC{i} ({explained[i-1]:.2f}%)', ylabel=f'PC{j}({explained[j-1]:.2f}%)',
+                legend_kwargs={'bbox_to_anchor': (1, 1)})
+
+for i in range(1,4):
+    for j in range(1,4):
+        if j>i:
+            plot_2d_scatter(pca_df_patient, f'PC{i}', f'PC{j}', f'PCA (PC{i} vs. PC{j}) of patients grouped by sex',
                 group_colors=group_colors, group_labels=group_labels,
                 xlabel=f'PC{i} ({explained[i-1]:.2f}%)', ylabel=f'PC{j}({explained[j-1]:.2f}%)',
                 legend_kwargs={'bbox_to_anchor': (1, 1)})
@@ -124,12 +136,22 @@ pls = PLSRegression(n_components=3)
 pls_components = pls.fit_transform(scaled_spectra, groups_clean)[0]
 pls_df = pd.DataFrame(pls_components, columns=['PLS1', 'PLS2', 'PLS3'])
 pls_df['Group'] = sex_clean
+pls_df['Filter'] = groups_clean
+
+pls_df_control = pls_df[pls_df['Filter']==0]
+pls_df_patient = pls_df[pls_df['Filter']==1]
 
 # Plot 2D do PLS-DA
 for i in range(1,4):
     for j in range(1,4):
         if j>i:
-            plot_2d_scatter(pls_df, f'PLS{i}', f'PLS{j}', f'PLS-DA (PLS{i} vs. PLS{j}) by sex',
+            plot_2d_scatter(pls_df_control, f'PLS{i}', f'PLS{j}', f'PLS-DA (PLS{i} vs. PLS{j}) of controls grouped by sex',
+                group_colors=group_colors, group_labels=group_labels)
+            
+for i in range(1,4):
+    for j in range(1,4):
+        if j>i:
+            plot_2d_scatter(pls_df_patient, f'PLS{i}', f'PLS{j}', f'PLS-DA (PLS{i} vs. PLS{j}) of patients grouped by sex',
                 group_colors=group_colors, group_labels=group_labels)
             
 #PCA para a idade
@@ -142,7 +164,7 @@ for i in range (len(df['Age'])):
         elif df['Age'].iloc[i] >= 70 and df['Age'].iloc[i]<=100:
             df['Age'].iloc[i] = 2
 
-group_colors = {1: "blue", 0: "red", 2: "yellow"}
+group_colors = {1: "#eed3a0", 0: "#99b58a", 2: "#cb8569"}
 group_labels = {1: "[30-50[", 0: "[50-70[", 2: "[70-100]"}
 
 age_clean = df['Age'][mask].to_numpy()
@@ -154,13 +176,25 @@ explained = pca.explained_variance_ratio_ * 100
 
 pca_df = pd.DataFrame(pcs, columns=['PC1', 'PC2', 'PC3'])
 pca_df['Group'] = age_clean
+pca_df['Filter'] = groups_clean
+
+pca_df_control = pca_df[pca_df['Filter']==0]
+pca_df_patient = pca_df[pca_df['Filter']==1]
 
 print(f"Explained Variance: PC1={explained[0]:.2f}%, PC2={explained[1]:.2f}%, PC3={explained[2]:.2f}%")
 
 for i in range(1,4):
     for j in range(1,4):
         if j>i:
-            plot_2d_scatter(pca_df, f'PC{i}', f'PC{j}', f'PCA (PC{i} vs. PC{j}) by age',
+            plot_2d_scatter(pca_df_control, f'PC{i}', f'PC{j}', f'PCA (PC{i} vs. PC{j}) of controls grouped by age',
+                group_colors=group_colors, group_labels=group_labels,
+                xlabel=f'PC{i} ({explained[i-1]:.2f}%)', ylabel=f'PC{j}({explained[j-1]:.2f}%)',
+                legend_kwargs={'bbox_to_anchor': (1, 1)})
+
+for i in range(1,4):
+    for j in range(1,4):
+        if j>i:
+            plot_2d_scatter(pca_df_patient, f'PC{i}', f'PC{j}', f'PCA (PC{i} vs. PC{j}) of patients grouped by age',
                 group_colors=group_colors, group_labels=group_labels,
                 xlabel=f'PC{i} ({explained[i-1]:.2f}%)', ylabel=f'PC{j}({explained[j-1]:.2f}%)',
                 legend_kwargs={'bbox_to_anchor': (1, 1)})
@@ -170,10 +204,20 @@ pls = PLSRegression(n_components=3)
 pls_components = pls.fit_transform(scaled_spectra, groups_clean)[0]
 pls_df = pd.DataFrame(pls_components, columns=['PLS1', 'PLS2', 'PLS3'])
 pls_df['Group'] = age_clean
+pls_df['Filter'] = groups_clean
+
+pls_df_control = pls_df[pls_df['Filter']==0]
+pls_df_patient = pls_df[pls_df['Filter']==1]
 
 # PLS-DA plot
 for i in range(1,4):
     for j in range(1,4):
         if j>i:
-            plot_2d_scatter(pls_df, f'PLS{i}', f'PLS{j}', f'PLS-DA (PLS{i} vs. PLS{j}) by age',
+            plot_2d_scatter(pls_df_control, f'PLS{i}', f'PLS{j}', f'PLS-DA (PLS{i} vs. PLS{j}) of controls grouped by age',
+                group_colors=group_colors, group_labels=group_labels)
+            
+for i in range(1,4):
+    for j in range(1,4):
+        if j>i:
+            plot_2d_scatter(pls_df_patient, f'PLS{i}', f'PLS{j}', f'PLS-DA (PLS{i} vs. PLS{j}) of patients by age',
                 group_colors=group_colors, group_labels=group_labels)

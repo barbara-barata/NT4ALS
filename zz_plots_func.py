@@ -27,7 +27,7 @@ def plot_2d_scatter(df, x, y, title, group_colors=DEFAULT_GROUP_COLORS, group_la
     plt.title(title)
     plt.legend(**(legend_kwargs or {}))
     filename = get_filename(title)
-    plt.savefig(filename, bbox_inches='tight')
+    plt.savefig(filename, dpi=600, bbox_inches='tight')
     plt.close()
 
 def plot_3d_scatter(df, x, y, z, title, group_colors=DEFAULT_GROUP_COLORS, group_labels=DEFAULT_GROUP_LABELS, xlabel=None, ylabel=None, zlabel=None, legend_kwargs=None):
@@ -43,5 +43,5 @@ def plot_3d_scatter(df, x, y, z, title, group_colors=DEFAULT_GROUP_COLORS, group
     ax.set_title(title)
     ax.legend(**(legend_kwargs or {}))
     filename = get_filename(title)
-    plt.savefig(filename, bbox_inches='tight')
+    plt.savefig(filename, dpi=600, bbox_inches='tight')
     plt.close()

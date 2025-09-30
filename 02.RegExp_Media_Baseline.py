@@ -120,15 +120,73 @@ for i in range(num_spectra):
 
 plt.title('All Spectra (Baseline Corrected, Normalized, and Cut between 1850-2500) - URINE')
 plt.xlabel('Wavelength')
-plt.ylabel('Intensity')
+plt.ylabel('Absorvance')
 plt.legend()
-plt.xlim((cut_columns.min(), cut_columns.max()))  # Set x-axis limits to include all data
+plt.xlim((cut_columns.max(), cut_columns.min()))  # Set x-axis limits to include all data
 plt.show()
+plt.savefig('All Spectra (Baseline Corrected, Normalized, and Cut between 1850-2500) - URINE', dpi=600, bbox_inches='tight')
 
 print(f"Number of spectra plotted: {num_spectra}")
 
+# Define os grupos
+group_colors = {1: "#ff7f7f", 0: "#a5a7a7"}
+group_labels = {1: "Patient", 0: "Control"}
+
+df_spectra = pd.read_excel("Normalized_Spectra.xlsx")
+df_groups  = pd.read_excel("Samples group.xlsx")
+df = pd.merge(df_spectra, df_groups, left_on=df_spectra.columns[0],
+              right_on=df_groups.columns[0], how='left')
+
+# Mapear os grupos
+group_map = {"Patient": 1, "Control": 0}
+df['Group'] = df['Group'].map(group_map).fillna(2).astype(int)
+
+sample_names = df.iloc[:, 0]
+spectra = df.iloc[:, 1:df_spectra.shape[1]]
+  
+print (spectra)
+
+label_bool = {1:0, 0:0, 2:0}
+
+# Plot
+plt.figure(figsize=(10, 6))
+df_control = df[df['Group']==0]
+df_patient = df[df['Group']==1]
+spectra_control= df_control.iloc[:, 1:df_spectra.shape[1]]
+spectra_patient= df_patient.iloc[:, 1:df_spectra.shape[1]]
+
+means_control=[]
+means_patient=[]
+
+for col in spectra_control.columns:
+    means_control.append(spectra_control[col].mean())
+    means_patient.append(spectra_patient[col].mean())
+   
+    
+plt.plot(cut_columns_second, means_control[0:len(cut_columns_second)], color=group_colors[0], label = group_labels[0])
+plt.plot(cut_columns_first, means_control[len(cut_columns_second):], color=group_colors[0])
+plt.plot(cut_columns_second, means_patient[0:len(cut_columns_second)], color=group_colors[1], label = group_labels[1])
+plt.plot(cut_columns_first, means_patient[len(cut_columns_second):], color=group_colors[1])
+plt.xlim((cut_columns.max(), cut_columns.min()))
+plt.title('Average Spectra of Each Group')
+plt.xlabel('Wavenumber')
+plt.ylabel('Absorvance')
+plt.legend()
+plt.tight_layout()
+plt.show()
+plt.savefig('Average Spectra of Each Group', dpi=600, bbox_inches='tight')
+
+'''for i in range(len(df)):
+    plotList = spectra.iloc[i].tolist()
+    label = None
+    if label_bool[df['Group'].iloc[i]] == 0:
+        label = group_labels[df['Group'].iloc[i]]
+        label_bool[df['Group'].iloc[i]] = 1
+    plt.plot(cut_columns_second, plotList[0:len(cut_columns_second)], color=group_colors[df['Group'].iloc[i]], label=label)
+    plt.plot(cut_columns_first, plotList[len(cut_columns_second):], color=group_colors[df['Group'].iloc[i]])
+
 # Define os grupos por sexo
-group_colors = {1: "blue", 0: "red"}
+group_colors = {1: "#FF9FCF", 0: "#4c95ff"}
 group_labels = {1: "Female", 0: "Male"}
 
 # Carregar dados espectrais e grupos usando merge
@@ -160,7 +218,7 @@ for i in range(len(df)):
     plt.plot(cut_columns_first, plotList[len(cut_columns_second):], color=group_colors[df['Sex'].iloc[i]])
 plt.title('All Spectra by gender')
 plt.xlabel('Wavenumber')
-plt.ylabel('Intensity')
+plt.ylabel('Absorvance')
 plt.legend()
 plt.tight_layout()
 plt.show()
@@ -174,7 +232,7 @@ for i in range (len(df['Age'])):
         elif df['Age'].iloc[i] >= 70 and df['Age'].iloc[i]<=100:
             df['Age'].iloc[i] = 2
 
-group_colors = {1: "blue", 0: "red", 2: "yellow"}
+group_colors = {1: "#eed3a0", 0: "#99b58a", 2: "#cb8569"}
 group_labels = {1: "[30-50[", 0: "[50-70[", 2: "[70-100]"}
 
 label_bool = {1:0, 0:0, 2:0}
@@ -191,10 +249,10 @@ for i in range(len(df)):
     plt.plot(cut_columns_first, plotList[len(cut_columns_second):], color=group_colors[df['Age'].iloc[i]])
 plt.title('All Spectra by age')
 plt.xlabel('Wavenumber')
-plt.ylabel('Intensity')
+plt.ylabel('Absorvance')
 plt.legend()
 plt.tight_layout()
-plt.show()
+plt.show()'''
 
 
 
