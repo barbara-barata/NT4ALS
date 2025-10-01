@@ -219,5 +219,5 @@ for i in range(1,4):
 for i in range(1,4):
     for j in range(1,4):
         if j>i:
-            plot_2d_scatter(pls_df_patient, f'PLS{i}', f'PLS{j}', f'PLS-DA (PLS{i} vs. PLS{j}) of patients by age',
+            plot_2d_scatter(pls_df_patient, f'PLS{i}', f'PLS{j}', f'PLS-DA (PLS{i} vs. PLS{j}) of patients grouped by age',
                 group_colors=group_colors, group_labels=group_labels)
