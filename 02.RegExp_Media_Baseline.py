@@ -123,13 +123,12 @@ plt.xlabel('Wavelength')
 plt.ylabel('Absorvance')
 plt.legend()
 plt.xlim((cut_columns.max(), cut_columns.min()))  # Set x-axis limits to include all data
-plt.show()
 plt.savefig('All Spectra (Baseline Corrected, Normalized, and Cut between 1850-2500) - URINE', dpi=600, bbox_inches='tight')
 
 print(f"Number of spectra plotted: {num_spectra}")
 
 # Define os grupos
-group_colors = {1: "#ff7f7f", 0: "#a5a7a7"}
+group_colors = {1: "#ff7f7f", 0: "#7e8181"}
 group_labels = {1: "Patient", 0: "Control"}
 
 df_spectra = pd.read_excel("Normalized_Spectra.xlsx")
@@ -173,7 +172,6 @@ plt.xlabel('Wavenumber')
 plt.ylabel('Absorvance')
 plt.legend()
 plt.tight_layout()
-plt.show()
 plt.savefig('Average Spectra of Each Group', dpi=600, bbox_inches='tight')
 
 '''for i in range(len(df)):

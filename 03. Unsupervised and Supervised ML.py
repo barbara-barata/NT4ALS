@@ -9,7 +9,7 @@ from scipy.stats import zscore
 from zz_plots_func import plot_2d_scatter, plot_3d_scatter
 
 # Define os mapeamentos de cores e labels para os grupos
-group_colors = {1: "#ff7f7f", 0: "#a5a7a7"}
+group_colors = {1: "#ff7f7f", 0: "#7e8181"}
 group_labels = {1: "Patient", 0: "Control"}
 
 # Carregar dados espectrais e grupos usando merge
@@ -164,7 +164,7 @@ for i in range (len(df['Age'])):
         elif df['Age'].iloc[i] >= 70 and df['Age'].iloc[i]<=100:
             df['Age'].iloc[i] = 2
 
-group_colors = {1: "#eed3a0", 0: "#99b58a", 2: "#cb8569"}
+group_colors = {1: "#deab4a", 0: "#71945e", 2: "#ac5c3b"}
 group_labels = {1: "[30-50[", 0: "[50-70[", 2: "[70-100]"}
 
 age_clean = df['Age'][mask].to_numpy()
